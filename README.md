@@ -10,10 +10,6 @@ A simple, responsive calculator application built using React.
 - Clear and user-friendly interface
 - Built with React (JavaScript)
 
-## Demo
-
-<!-- If you have a live demo link, add it here -->
-[Live Demo]((https://calculator-app-ivory-xi.vercel.app/))
 
 ## Getting Started
 
