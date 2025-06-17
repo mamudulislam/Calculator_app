@@ -48,7 +48,8 @@ export default function Calculator() {
     };
 
     const inputPercent = () => {
-        setDisplay((prev) => (parseFloat(prev) / 100).toString());
+        const value = parseFloat(display);
+        setDisplay((value / 100).toString());
     };
 
     const performOperation = (nextOperator) => {
@@ -56,7 +57,7 @@ export default function Calculator() {
 
         if (operator && waitingForOperand) {
             setOperator(nextOperator);
-            setExpression(`${firstOperand} ${nextOperator}`);
+            setExpression(expression.slice(0, -1) + nextOperator);
             return;
         }
 
@@ -65,7 +66,12 @@ export default function Calculator() {
             setExpression(`${inputValue} ${nextOperator}`);
         } else if (operator) {
             const result = calculate(firstOperand, inputValue, operator);
-            setDisplay(result.toString());
+            if (result === "Error") {
+                clearAll();
+                setDisplay("Error");
+                return;
+            }
+            setDisplay(String(result));
             setFirstOperand(result);
             setExpression(`${result} ${nextOperator}`);
         }
@@ -89,7 +95,28 @@ export default function Calculator() {
         }
     };
 
+    const handleEquals = () => {
+        if (operator && firstOperand != null && !waitingForOperand) {
+            const result = calculate(firstOperand, parseFloat(display), operator);
+            if (result === "Error") {
+                clearAll();
+                setDisplay("Error");
+                return;
+            }
+            setDisplay(String(result));
+            setExpression(`${expression} ${display} =`);
+            setFirstOperand(null);
+            setOperator(null);
+            setWaitingForOperand(true);
+        }
+    };
+
     const handleClick = (btn) => {
+        if (display === "Error" && btn !== "C") {
+            clearAll();
+            return;
+        }
+
         if (!isNaN(btn)) {
             inputDigit(btn);
         } else if (btn === ".") {
@@ -103,14 +130,7 @@ export default function Calculator() {
         } else if (["+", "-", "×", "÷"].includes(btn)) {
             performOperation(btn);
         } else if (btn === "=") {
-            if (operator && firstOperand != null && !waitingForOperand) {
-                const result = calculate(firstOperand, parseFloat(display), operator);
-                setDisplay(result.toString());
-                setFirstOperand(null);
-                setOperator(null);
-                setWaitingForOperand(true);
-                setExpression(""); // Clear the expression
-            }
+            handleEquals();
         }
     };
 
@@ -126,6 +146,8 @@ export default function Calculator() {
                 {buttons.flat().map((btn, i) => {
                     const isOperator = ["÷", "×", "-", "+", "="].includes(btn);
                     const isZero = btn === "0";
+                    const isSpecial = ["C", "+/-", "%"].includes(btn);
+
                     return (
                         <button
                             key={i}
@@ -133,10 +155,12 @@ export default function Calculator() {
                             className={`
                                 ${isZero ? "col-span-2" : "col-span-1"}
                                 text-white text-2xl h-16 rounded-full
-                                ${isOperator ? "bg-orange-500"
-                                    : btn === "C" || btn === "+/-" || btn === "%"
-                                        ? "bg-gray-400 text-black"
-                                        : "bg-gray-700"}
+                                ${isOperator ? "bg-orange-500 hover:bg-orange-600"
+                                    : isSpecial
+                                        ? "bg-gray-400 text-black hover:bg-gray-300"
+                                        : "bg-gray-700 hover:bg-gray-600"}
+                                transition-colors duration-200
+                                focus:outline-none
                             `}
                         >
                             {btn}
