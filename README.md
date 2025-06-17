@@ -2,7 +2,6 @@
 
 A simple, responsive calculator application built using React.
 
-![screenshot](screenshot.png) <!-- Update or remove this line if you don't have a screenshot -->
 
 ## Features
 
