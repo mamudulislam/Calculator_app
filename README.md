@@ -13,7 +13,7 @@ A simple, responsive calculator application built using React.
 ## Demo
 
 <!-- If you have a live demo link, add it here -->
-[Live Demo](https://your-demo-link.com)
+[Live Demo](calculator-app-ivory-xi.vercel.app)
 
 ## Getting Started
 
